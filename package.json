@@ -1,0 +1,19 @@
+{
+	"name": "youtube-object2iframe",
+	"fullName": "YouTube Object2iframe",
+	"description": "This addon converts old-style flash embeds into new-style iframe embeds.  This allows for HTML5 playback without flash.",
+
+	"author": "youarefunny",
+	"contributors": [],
+
+	"id": "youtube-o2i",
+	"version": "1.0",
+	"lib": "lib",
+	"main": "main",
+
+	"preferences": [],
+
+	"license": "zlib",
+	"url": "https://github.com/kevincox/youtube-o2i",
+	"dependencies": ["api-utils", "addon-kit"]
+}
