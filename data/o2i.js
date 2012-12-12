@@ -30,7 +30,12 @@ for ( i in objects )
 		i.style.width  = o.width  + "px";
 		i.style.height = o.height + "px";
 
+		i.setAttribute("allowfullscreen", "true");
+
 		o.parentNode.insertBefore(i, o);
 		o.parentNode.removeChild(o);
 	}
 };
+
+l = [1,2,3,4,5]
+for ( i in l ) console.log(i);
