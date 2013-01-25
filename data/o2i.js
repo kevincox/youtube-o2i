@@ -1,41 +1,51 @@
 var oytre = new RegExp("^(https?://)(www\\.)?youtube(-nocookie)?.com/v/([^/?#]*).*$","i");
 
-var objects = [];
-var objectsel = document.getElementsByTagName("object");
-for ( i in objectsel )
-	objects.push(objectsel[i]);
-
-for ( i in objects )
+function scanElement(ele)
 {
-	var o = objects[i];
-	if ( o.tagName != "OBJECT" ) continue; // We are also getting properties.
-	var e = o.getElementsByTagName("embed")[0];
+	var objects = [];
+	var objectsel = ele.getElementsByTagName("object");
+	for ( i in objectsel )
+		objects.push(objectsel[i]);
 
-	var r = e.src.match(oytre);
-	if (r)
+	for ( i in objects )
 	{
-		let i = document.createElement("iframe");
+		var o = objects[i];
+		if ( o.tagName != "OBJECT" ) continue; // We are also getting properties.
+		var e = o.getElementsByTagName("embed")[0];
 
-		//i.src = e.src.replace("/v/", "/embed/"); // Turn the flash url into an embed url.
+		var r = e.src.match(oytre);
+		if (r)
+		{
+			let i = document.createElement("iframe");
 
-		/* So the above line **should** work but when the video is embeded
-		   without any parameters, youtube adds some incorrectaly which makes
-		   the iframe embed 404.  So this checks to see if the URL is proper and
-		   fixes it if it isn't.
-		*/
-		var src = e.src.replace("/v/", "/embed/");
-		if ( src.indexOf("?") < 0 ) src = src.replace(/&/, "?"); // Not global.
-		i.src = src;
+			i.src = e.src.replace("/v/", "/embed/"); // Turn the flash url into an embed url.
 
-		i.style.width  = o.width  + "px";
-		i.style.height = o.height + "px";
+			/* So the above line **should** work but when the video is embeded
+			without any parameters, youtube adds some incorrectaly which makes
+			the iframe embed 404.  So this checks to see if the URL is proper and
+			fixes it if it isn't.
+			*/
+			//var src = e.src.replace("/v/", "/embed/");
+			//if ( src.indexOf("?") < 0 ) src = src.replace(/&/, "?"); // Not global.
+			//i.src = src;
+			// Seams to be fixed now that we are using MutationObserver.
 
-		i.setAttribute("allowfullscreen", "true");
+			i.style.width  = o.width  + "px";
+			i.style.height = o.height + "px";
 
-		o.parentNode.insertBefore(i, o);
-		o.parentNode.removeChild(o);
+			i.setAttribute("allowfullscreen", "true");
+
+			o.parentNode.insertBefore(i, o);
+			o.parentNode.removeChild(o);
+		}
 	}
-};
+}
 
-l = [1,2,3,4,5]
-for ( i in l ) console.log(i);
+var observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        scanElement(mutation.target);
+    });
+});
+
+// pass in the target node, as well as the observer options
+observer.observe(document, { childList: true, subtree: true });
